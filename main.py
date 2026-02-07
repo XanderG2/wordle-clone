@@ -23,6 +23,9 @@ while True:
             if not 2 < letters <= maxLetters:
                 print(f"Please enter a value between 3 and {maxLetters}.")
                 continue
+            validWords = [x.strip() for x in words if len(x.strip()) == letters]
+            if len(validWords) == 0:
+                print(f"There are no words {letters} letters long")
         else:
             print("Dev mode activated.")
             dev = True
@@ -31,7 +34,6 @@ while True:
     except ValueError:
         print("Please put a number.")
 
-validWords = [x.strip() for x in words if len(x.strip()) == letters]
 
 CORRECT = "\033[42m"       # Green background
 WRONG_PLACE = "\033[43m"   # Yellow background
@@ -39,10 +41,6 @@ WRONG = "\033[40m"         # Black background
 RESET = "\033[0m"          # Reset colour
 
 colors = input(CORRECT + "Can you see the background color? (y/n)" + RESET + "\n> ").lower() in ["y", "yes"]
-
-if not colors:
-    print("Havent added functionality for this yet lmao. Skill issue")
-    exit("Skill issue")
 
 clear()
 
@@ -67,22 +65,39 @@ while True:
                 clearLine()
                 continue
             break
-        clearLine()
-        truth = ["" for i in range(letters)]
-        corrects = 0
-        lets = {w: a for w, a in zip(word, [word.count(x) for x in word])} # word: appearences // useful for yellow marking (if word has only 1 of a
-        for i, x in enumerate(guess):                                                                                       # letter only mark it once, etc.)
-            if word[i] == x:
-                truth[i] = CORRECT + x + RESET
-                corrects += 1
-                lets[x] -= 1
-        for i, x in enumerate(guess): 
-            if x in word and lets[x] > 0 and not word[i] == x:
-                truth[i] = WRONG_PLACE + x + RESET
-                lets[x] -= 1
-            elif not word[i] == x:
-                truth[i] = WRONG + x + RESET
-        print("".join(truth))
+        if colors:
+            clearLine()
+            truth = ["" for i in range(letters)]
+            corrects = 0
+            lets = {w: a for w, a in zip(word, [word.count(x) for x in word])} # word: appearences // useful for yellow marking (if word has only 1 of a
+            for i, x in enumerate(guess):                                                                                       # letter only mark it once, etc.)
+                if word[i] == x:
+                    truth[i] = CORRECT + x + RESET
+                    corrects += 1
+                    lets[x] -= 1
+            for i, x in enumerate(guess): 
+                if x in word and lets[x] > 0 and not word[i] == x:
+                    truth[i] = WRONG_PLACE + x + RESET
+                    lets[x] -= 1
+                elif not word[i] == x:
+                    truth[i] = WRONG + x + RESET
+            print("".join(truth))
+        else:
+            truth = ["" for i in range(letters)]
+            corrects = 0
+            lets = {w: a for w, a in zip(word, [word.count(x) for x in word])} # word: appearences // useful for yellow marking (if word has only 1 of a
+            for i, x in enumerate(guess):                                                                                       # letter only mark it once, etc.)
+                if word[i] == x:
+                    truth[i] = "✅"
+                    corrects += 1
+                    lets[x] -= 1
+            for i, x in enumerate(guess): 
+                if x in word and lets[x] > 0 and not word[i] == x:
+                    truth[i] = "🟨"
+                    lets[x] -= 1
+                elif not word[i] == x:
+                    truth[i] = "❌"
+            print("".join(truth))
         if corrects == letters:
             break
     again = input("Well done!\nAgain? (y/n)\n> ") in ["y", "yes"]

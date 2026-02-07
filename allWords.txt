@@ -240820,6 +240820,7 @@ pneumonorrhaphy
 pneumonosis
 pneumonotherapy
 pneumonotomy
+pneumonoultramicroscopicsilicovolcanoconiosis
 pneumopericardium
 pneumoperitoneum
 pneumoperitonitis
