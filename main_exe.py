@@ -52,7 +52,7 @@ colors = input(CORRECT + "Can you see the background color? (y/n)" + RESET + "\n
 clear()
 
 while True:
-    print("--------- Python Wordle ---------")
+    print("------------ Wordle ------------")
     print(f"Selected letters: {letters}")
     print("Dev mode\n" if dev else "")
     word = input("Word: ") if dev else random.choice(validWords)
