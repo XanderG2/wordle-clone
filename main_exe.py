@@ -1,16 +1,22 @@
-# The python version
-import os, random, time
+# The one in the .EXE
+import os, random, time, sys
 
 clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
 clearLine = lambda: print("\033[1A\033[2K\r", end="")
 
 clear()
 
-try:
-    with open("allWords.txt", "r") as f:
-        words = f.readlines()
-except FileNotFoundError:
-    exit("No word file found, please ensure you have downloaded the whole project.")
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and PyInstaller EXE"""
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, relative_path)
+
+with open(resource_path("allWords.txt"), "r") as f:
+    words = f.readlines()
 
 maxLetters = max(map(len, words))
 
