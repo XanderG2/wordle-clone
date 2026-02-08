@@ -25,6 +25,7 @@ dev = False
 while True:
     try:
         letters = input("Please enter the amount of letters in the word you would like to guess:\n> ")
+        validWords = []
         if letters != "dev":
             letters = int(letters)
             if not 2 < letters <= maxLetters:
