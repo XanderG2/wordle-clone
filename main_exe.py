@@ -54,7 +54,7 @@ while True:
             break
         except ValueError:
             print("Please put a number.")
-    print("--------- Python Wordle ---------")
+    print("--------- Wordle ---------")
     print(f"Selected letters: {letters}")
     print("Dev mode\n" if dev else "", end="")
     print("C = Correct place   W = Wrong place   X = Not in word" if not colors else "", end="\n\n")
