@@ -54,27 +54,33 @@ while True:
             break
         except ValueError:
             print("Please put a number.")
+    clear()
     print("--------- Wordle ---------")
     print(f"Selected letters: {letters}")
     print("Dev mode\n" if dev else "", end="")
+    print("Type \"giveup\" to give up.")
     print("C = Correct place   W = Wrong place   X = Not in word" if not colors else "", end="\n\n")
     word = input("Word: ") if dev else random.choice(validWords)
+    giveup = False
     while True: # Main game loop
         while True:
             guess = input().strip()
-            if len(guess) != letters:
+            if guess == "giveup":
+                giveup = True
+            elif len(guess) != letters:
                 print("Please guess the correct amount of letters!")
                 time.sleep(2)
                 clearLine()
                 clearLine()
                 continue
-            if guess not in validWords and not dev:
+            elif guess not in validWords and not dev:
                 print("Please guess an existing word!")
                 time.sleep(2)
                 clearLine()
                 clearLine()
                 continue
             break
+        if giveup: break
         if colors:
             clearLine()
             truth = ["" for i in range(letters)]
@@ -110,7 +116,8 @@ while True:
             print("".join(truth))
         if corrects == letters:
             break
-    again = input("Well done!\nAgain? (y/n)\n> ") in ["y", "yes"]
+    if giveup: print("Word was:", word)
+    again = input(f"{'Well done!\n' if not giveup else ''}Again? (y/n)\n> ") in ["y", "yes"]
     clear()
     if not again:
         break
