@@ -6,6 +6,11 @@ CORRECT = "\033[42m"       # Green background
 WRONG_PLACE = "\033[43m"   # Yellow background
 WRONG = "\033[40m"         # Black background
 RESET = "\033[0m"          # Reset colour
+NONCOLOR_KEY = {
+    "C": CORRECT,
+    "W": WRONG_PLACE,
+    "X": WRONG
+}
 
 def resource_path(relative_path):
     """Get absolute path to resource, works for dev and PyInstaller EXE"""
@@ -62,20 +67,26 @@ def requestLetters(maxLetters: int, minLetters: int, words: list[str]) -> tuple[
     :rtype: tuple[int, list[str], bool]
     """
     while True:
-        lettersInput = input(f"Please enter the amount of letters in the word you would like to guess ({3 if minLetters <3 else minLetters}-{maxLetters}):\n> ")
+        lettersInput: str = input(f"Please enter the amount of letters in the word you would like to guess ({3 if minLetters <3 else minLetters}-{maxLetters}):\n> ")
         if lettersInput != "dev":
             if lettersInput.isdigit():
                 letters: int = int(lettersInput)
+
                 if 2 > letters or maxLetters < letters:
                     print(f"Please enter a value between {3 if minLetters <3 else minLetters} and {maxLetters}.")
                     continue
-                validWords = [x.strip() for x in words if len(x.strip()) == letters]
+
+                validWords: list[str] = [x.strip() for x in words if len(x.strip()) == letters]
+
                 if len(validWords) == 0:
                     print(f"There are no words {letters} letters long")
                     continue
+
                 return letters, validWords, False
+            
             else:
                 print("Please put a number.")
+            
         else:
             print("Dev mode activated.")
             letters: int = int(input("Please enter the amount of letters in the word you would like to guess:\n> "))
@@ -125,11 +136,7 @@ def formatLetter(result: str, letter: str) -> str:
     :return: The formatted letter
     :rtype: str
     """
-    return {
-        "C": CORRECT,
-        "W": WRONG_PLACE,
-        "X": WRONG
-    }[result] + letter + RESET
+    return NONCOLOR_KEY[result] + letter + RESET
 
 def play(colors: bool, letters: int, word: str, validWords: list[str], dev: bool) -> int:
     """
