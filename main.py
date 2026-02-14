@@ -120,7 +120,7 @@ def requestLetters(
             if lettersInput.isdigit():
                 letters: int = int(lettersInput)
 
-                if 2 > letters or maxLetters < letters:
+                if minLetters > letters or maxLetters < letters:
                     print(
                         f"Please enter a value between {minLetters} and "
                         f"{maxLetters}."
@@ -280,6 +280,7 @@ def main():
 
     maxLetters: int = max(len(word) for word in words)
     minLetters: int = min(len(word) for word in words)
+    minLetters = 3 if maxLetters > 3 else minLetters
 
     colors: bool = input(CORRECT + "Can you see the background color? (y/n)" +
                          RESET + "\n> ").lower() in ["y", "yes"]
