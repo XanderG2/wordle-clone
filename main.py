@@ -405,7 +405,7 @@ def main():
             print("Dev mode")
         print("Type 'giveup' to give up.")
         if not game_config.colors:
-            print("C = Correct place   W = Wrong place   X = Not in word")
+            print("<> = Correct place   ? = Wrong place   - = Not in word")
         print("\n")
 
         word: str = input(
