@@ -1,1 +1,1 @@
-py -m PyInstaller --onefile --add-data "allWords.txt;." main_exe.py
+py -m PyInstaller --onefile --add-data "allWords.txt;." main.py

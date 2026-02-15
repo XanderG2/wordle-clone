@@ -2,6 +2,7 @@
 import os
 import random
 import time
+import sys
 from enum import StrEnum
 from collections import Counter
 from dataclasses import dataclass
@@ -103,6 +104,20 @@ def get_words(file_path: str) -> list[str]:
     return words
 
 
+def resource_path(relative_path: str) -> str:
+    """
+    Get absolute path to resource, works for PyInstaller EXE
+
+    :param relative_path: The relative path to the words file
+    """
+    if getattr(sys, 'frozen', False):
+        # temporary folder for PyInstaller
+        base_path: str = sys._MEIPASS  # type: ignore
+    else:
+        base_path: str = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, relative_path)
+
+
 def get_word_file_path(default_file_path: str) -> str:
     """
     Get the file_path of the words file
@@ -114,8 +129,8 @@ def get_word_file_path(default_file_path: str) -> str:
     :return: file_path of words file
     :rtype: str
     """
-    if os.path.exists(default_file_path):
-        return default_file_path
+    if os.path.exists(resource_path(default_file_path)):
+        return resource_path(default_file_path)
 
     print(f"No word file found. The default words file name is {WORD_FILE}")
 
