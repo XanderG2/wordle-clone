@@ -39,16 +39,24 @@ class LetterRequest:
 @dataclass
 class GameConfig:
     """
-    Docstring for Config
+    Configuration for whole game
     """
     min_letters: int
     max_letters: int
     colors: bool
-    dev: bool = False
-    letters: int = 0  # to be redefined later
 
 
-WORD_FILE = "allWords.txt"
+@dataclass
+class RoundConfig:
+    """
+    Configuration for specific round
+    """
+    dev: bool
+    letters: int
+
+
+WORD_FILE = "allWords.txt"      # Default word file
+
 CORRECT_ANSI = "\033[42m"       # Green background
 WRONG_PLACE_ANSI = "\033[43m"   # Yellow background
 WRONG_ANSI = "\033[40m"         # Black background
@@ -247,7 +255,8 @@ def format_letter(result: Result, letter: str) -> str:
 
 
 def play(
-        config: GameConfig,
+        game_config: GameConfig,
+        round_config: RoundConfig,
         word: str,
         valid_words: list[str],
 ) -> PlayStatusCode:
@@ -257,8 +266,10 @@ def play(
     - 1: The user has given up.
     - 2: The user has won.
 
-    :param config: Info about the game configuration
-    :type config: GameConfig
+    :param game_config: Info about the game configuration
+    :type game_config: GameConfig
+    :param round_config: Info about the round configuration
+    :type round_config: RoundConfig
     :param word: The word the user is trying to guess
     :type word: str
     :param valid_words: The guessable words
@@ -266,12 +277,16 @@ def play(
     :return: Status code
     :rtype: PlayStatusCode
     """
-    guess, giveup = validate_guess(config.letters, valid_words, config.dev)
+    guess, giveup = validate_guess(
+        round_config.letters,
+        valid_words,
+        round_config.dev
+    )
 
     if giveup:
         return PlayStatusCode.GIVE_UP
 
-    truth: list[Result] = [Result.WRONG] * config.letters
+    truth: list[Result] = [Result.WRONG] * round_config.letters
     corrects: int = 0
 
     # useful for yellow marking
@@ -292,7 +307,7 @@ def play(
             truth[i] = Result.WRONG_PLACE
             num_of_letters[letter] -= 1
 
-    if config.colors:
+    if game_config.colors:
         toPrint: list[str] = [""] * len(truth)
         for i, letter in enumerate(guess):
             result = truth[i]
@@ -303,7 +318,7 @@ def play(
     else:
         print("".join(truth))
 
-    if corrects == config.letters:
+    if corrects == round_config.letters:
         return PlayStatusCode.WON
 
     return PlayStatusCode.NORMAL
@@ -322,7 +337,7 @@ def main():
 
     clear()
 
-    initial_config: GameConfig = GameConfig(
+    game_config: GameConfig = GameConfig(
         max_letters=max_letters,
         min_letters=min_letters,
         colors=colors
@@ -330,28 +345,28 @@ def main():
 
     playing: bool = True
     while playing:
-        lettersInfo: LetterRequest = request_letters(words, initial_config)
+        lettersInfo: LetterRequest = request_letters(words, game_config)
         valid_words: list[str] = lettersInfo.valid_words
-        config: GameConfig = initial_config
-        config.letters = lettersInfo.letters
-        config.dev = lettersInfo.dev
-
-        clear()
+        round_config: RoundConfig = RoundConfig(
+            letters=lettersInfo.letters,
+            dev=lettersInfo.dev
+        )
+        # clear()
         print("--------- Python Wordle ---------")
-        print(f"Selected letters: {config.letters}")
-        if config.dev:
+        print(f"Selected letters: {round_config.letters}")
+        if round_config.dev:
             print("Dev mode")
         print("Type 'giveup' to give up.")
-        if not colors:
+        if not game_config.colors:
             print("C = Correct place   W = Wrong place   X = Not in word")
         print("\n")
 
         word: str = input(
-            "Word: ") if config.dev else random.choice(valid_words)
+            "Word: ") if round_config.dev else random.choice(valid_words)
         status: PlayStatusCode = PlayStatusCode.NORMAL
 
         while status is PlayStatusCode.NORMAL:
-            status = play(config, word, valid_words)
+            status = play(game_config, round_config, word, valid_words)
 
         if status is PlayStatusCode.GIVE_UP:
             print("Word was:", word)
